@@ -29,5 +29,28 @@ class FoodController < ApplicationController
         end
       end
     
-      
+      def destroy
+        @food = Food.where(user: current_user).find(params[:id])
+        redirect_to foods_path, notice: "Food #{@food.name} was deleted!" and return if @food.destroy
+    
+        redirect_to foods_path, alert: 'Something went wrong while trying to delete the Food'
+      end
+    
+      private
+    
+      def food_params
+        params.require(:food).permit(:name, :measurement_unit, :price, :quantity)
+      end
+    
+      def session_params
+        return false if session[:new_food].nil?
+    
+        session[:new_food].filter do |key|
+          %w[name measurement_unit price quantity].include? key
+        end
+      end
+    
+      def food_exists?(id)
+        Food.where(user: current_user).exists? id
+      end
     end
