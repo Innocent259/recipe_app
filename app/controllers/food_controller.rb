@@ -1,2 +1,5 @@
 class FoodController < ApplicationController
-end
+    def index
+        @foods = Food.where(user: current_user)
+      end
+    end
